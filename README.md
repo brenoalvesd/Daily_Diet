@@ -6,17 +6,19 @@
     
     *As refeições devem ser relacionadas a um usuário.*
     
-    - Nome
-    - Descrição
-    - Data e Hora
-    - Está dentro ou não da dieta
-- Deve ser possível editar uma refeição, podendo alterar todos os dados acima
-- Deve ser possível apagar uma refeição
-- Deve ser possível listar todas as refeições de um usuário
-- Deve ser possível visualizar uma única refeição
-- Deve ser possível recuperar as métricas de um usuário
+    - Nome (*title*)
+    - Descrição (*description*)
+    - Data e Hora (*mealTime*)
+    - Está dentro ou não da dieta (*isInDiet*)
+
+
+- Deve ser possível editar uma refeição, podendo alterar todos os dados acima (UPDATE a meal)
+- Deve ser possível apagar uma refeição (DELETE a meal)
+- Deve ser possível listar todas as refeições de um usuário (GET diet_summary)
+- Deve ser possível visualizar uma única refeição (GET a meal)
+- Deve ser possível recuperar as métricas de um usuário (Cookies)
     - Quantidade total de refeições registradas
     - Quantidade total de refeições dentro da dieta
     - Quantidade total de refeições fora da dieta
     - Melhor sequência de refeições dentro da dieta
-- O usuário só pode visualizar, editar e apagar as refeições o qual ele criou
+- O usuário só pode visualizar, editar e apagar as refeições o qual ele criou (Use Cases)

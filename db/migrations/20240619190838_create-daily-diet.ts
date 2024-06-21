@@ -4,9 +4,9 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('daily diet', (table) => {
     table.uuid('id').primary()
     table.text('title').notNullable()
-    table.timestamp('ate_at').defaultTo(knex.fn.now()).notNullable()
+    table.timestamp('mealTime').defaultTo(knex.fn.now()).notNullable()
     table.text('description').notNullable()
-    table.boolean('is_in_diet').notNullable()
+    table.boolean('isInDiet').notNullable()
   })
 }
 
