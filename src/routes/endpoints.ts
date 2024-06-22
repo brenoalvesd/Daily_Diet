@@ -33,4 +33,9 @@ export async function dietRoutes(app: FastifyInstance) {
       return reply.status(500).send({ message: 'Failed to create meal.' })
     }
   })
+  app.get('/diet', async () => {
+    const meals = await knex('daily diet').select()
+
+    return meals
+  })
 }
