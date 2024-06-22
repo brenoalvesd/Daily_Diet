@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { randomUUID } from 'node:crypto'
 import { knex } from '../database'
+import { checkSessionIdExists } from '../middlewares/check-session-id-exists'
 
 // THIS IS A PLUG-IN FROM FASTIFY...
 // WHERE I'M SEPARATING THE ENDPOINTS TO THIS FILE, MAINTAINING THE server.ts FILE ONLY TO MANAGE THE SERVER
@@ -46,21 +47,44 @@ export async function dietRoutes(app: FastifyInstance) {
     }
   })
 
-  app.get('/diet', async () => {
-    const meals = await knex('daily diet').select()
+  app.get(
+    '/diet',
+    {
+      preHandler: [checkSessionIdExists],
+    },
+    async (request) => {
+      const { sessionId } = request.cookies
 
-    return { meals }
-  })
+      const meals = await knex('daily diet')
+        .where('session_id', sessionId)
+        .select()
 
-  app.get('/diet/:id', async (request) => {
-    const getMealParamsSchema = z.object({
-      id: z.string().uuid(),
-    })
+      return { meals }
+    },
+  )
 
-    const { id } = getMealParamsSchema.parse(request.params)
+  app.get(
+    '/diet/:id',
+    {
+      preHandler: [checkSessionIdExists],
+    },
+    async (request) => {
+      const getMealParamsSchema = z.object({
+        id: z.string().uuid(),
+      })
 
-    const meal = await knex('daily diet').where('id', id).first()
+      const { id } = getMealParamsSchema.parse(request.params)
 
-    return { meal }
-  })
+      const { sessionId } = request.cookies
+
+      const meal = await knex('daily diet')
+        .where({
+          session_id: sessionId,
+          id,
+        })
+        .first()
+
+      return { meal }
+    },
+  )
 }
