@@ -18,6 +18,17 @@ export async function dietRoutes(app: FastifyInstance) {
     const { title, description, mealTime, isInDiet } =
       createMealBodySchema.parse(request.body)
 
+    let sessionId = request.cookies.sessionId
+
+    if (!sessionId) {
+      sessionId = randomUUID()
+
+      reply.cookie('sessionId', sessionId, {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+      })
+    }
+
     try {
       await knex('daily diet').insert({
         id: randomUUID(),
@@ -25,6 +36,7 @@ export async function dietRoutes(app: FastifyInstance) {
         description,
         mealTime,
         isInDiet,
+        session_id: sessionId,
       })
       return reply
         .status(201)
@@ -33,11 +45,13 @@ export async function dietRoutes(app: FastifyInstance) {
       return reply.status(500).send({ message: 'Failed to create meal.' })
     }
   })
+
   app.get('/diet', async () => {
     const meals = await knex('daily diet').select()
 
     return { meals }
   })
+
   app.get('/diet/:id', async (request) => {
     const getMealParamsSchema = z.object({
       id: z.string().uuid(),
