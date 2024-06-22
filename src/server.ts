@@ -1,14 +1,10 @@
 import fastify from 'fastify'
-import { knex } from './database'
 import { env } from './env'
+import { dietRoutes } from './routes/endpoints'
 
 const app = fastify()
 
-app.get('/', async () => {
-  const tables = await knex('sqlite_schema').select('*')
-
-  return tables
-})
+app.register(dietRoutes)
 
 app
   .listen({
