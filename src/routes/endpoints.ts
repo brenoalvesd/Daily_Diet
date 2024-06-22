@@ -36,6 +36,17 @@ export async function dietRoutes(app: FastifyInstance) {
   app.get('/diet', async () => {
     const meals = await knex('daily diet').select()
 
-    return meals
+    return { meals }
+  })
+  app.get('/diet/:id', async (request) => {
+    const getMealParamsSchema = z.object({
+      id: z.string().uuid(),
+    })
+
+    const { id } = getMealParamsSchema.parse(request.params)
+
+    const meal = await knex('daily diet').where('id', id).first()
+
+    return { meal }
   })
 }
