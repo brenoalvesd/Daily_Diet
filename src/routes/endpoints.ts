@@ -129,4 +129,28 @@ export async function dietRoutes(app: FastifyInstance) {
       }
     },
   )
+
+  app.delete(
+    '/diet/:id',
+    {
+      preHandler: [checkSessionIdExists],
+    },
+    async (request, reply) => {
+      const paramsSchema = z.object({
+        id: z.string().uuid(),
+      })
+
+      const { id } = paramsSchema.parse(request.params)
+
+      try {
+        await knex('daily diet').delete().where('id', id)
+
+        return reply
+          .status(200)
+          .send({ message: 'Meal was successfully deleted.' })
+      } catch (error) {
+        return reply.status(500).send({ message: 'Failed to delete meal.' })
+      }
+    },
+  )
 }
