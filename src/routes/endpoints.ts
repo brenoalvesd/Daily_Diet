@@ -87,4 +87,46 @@ export async function dietRoutes(app: FastifyInstance) {
       return { meal }
     },
   )
+
+  app.put(
+    '/diet/:id',
+    {
+      preHandler: [checkSessionIdExists],
+    },
+    async (request, reply) => {
+      const bodySchema = z.object({
+        title: z.string(),
+        description: z.string(),
+        mealTime: z.string(),
+        isInDiet: z.boolean(),
+      })
+
+      const paramsSchema = z.object({
+        id: z.string().uuid(),
+      })
+
+      const { id } = paramsSchema.parse(request.params)
+
+      const { title, description, mealTime, isInDiet } = bodySchema.parse(
+        request.body,
+      )
+
+      try {
+        await knex('daily diet')
+          .update({
+            title,
+            description,
+            mealTime,
+            isInDiet,
+          })
+          .where('id', id)
+
+        return reply
+          .status(200)
+          .send({ message: 'Meal data was successfully updated.' })
+      } catch (error) {
+        return reply.status(500).send({ message: 'Failed to update meal.' })
+      }
+    },
+  )
 }
